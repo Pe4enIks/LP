@@ -93,6 +93,9 @@ word(X) :- member(X, [whose, "Whose"]).
 have(X) :- member(X, [is, "Is"]).
 have_lst([X], REL) :- member(X, [REL]).
 question_word(X) :-  member(X, ['?']).
+prev_set(NAME) :- nb_setval(name, NAME).
+word_prev(X) :- member(X,["His",his,"Him",him,"Her",her,"She",she,"He",he]),!.
+to_word(X) :- member(X, ["to", to]).
 
 
 %Пример запроса: [is, name_0, relationship, name_1, ?]
@@ -101,4 +104,8 @@ question(L) :- L = [IS, NAME_0, REL, NAME_1, Q], have(IS), relative(X, NAME_0, N
 
 %Пример запроса: [whose, relationship, is, name_1, ?]
 question(L) :- L = [WHOSE, REL, IS, NAME, Q], word(WHOSE), fam(REL, NAME, ANS), have(IS), question_word(Q),
-    write(NAME), write(" is "),  write(REL), write(" "), write(ANS), write("."), nl.
+    write(NAME), write(" is "),  write(REL), write(" "), write(ANS), write("."), prev_set(NAME), nl.
+
+%Пример запроса [she/he/her/him/his, relationship, to, name, ?] после пред запроса [whose, relationship, is, name_1, ?]
+question(L) :- L = [NAME_0, REL, TO, NAME_1, Q], word_prev(NAME_0), nb_getval(name, NAME_2), relative(X, NAME_2, NAME_1),!,have_lst(X, REL),
+to_word(TO), question_word(Q), write(NAME_2),  write(" is "),  write(REL),  write(" "),  write(NAME_1), write(".").
